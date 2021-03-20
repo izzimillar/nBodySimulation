@@ -127,9 +127,7 @@ public class Drawing extends Canvas implements ActionListener {
         for (Particle planet: planets) {
             g.fillOval((int) (planet.getPosition()[0]/ a), (int) (planet.getPosition()[1]/a), 10, 10);
         }
-//        for (Particle planet: bigPlanets) {
-//            g.fillOval((int) (planet.getPosition()[0]/ c), (int) (planet.getPosition()[1]/c), 10, 10);
-//        }
+
         // moon
 //        g.fillOval((int) ((moon.getPosition()[0]) / b), (int) ((moon.getPosition()[1]) /b), 5, 5);
         
