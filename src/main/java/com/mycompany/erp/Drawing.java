@@ -125,7 +125,7 @@ public class Drawing extends Canvas implements ActionListener {
         
         // draws an circle to represent each planet using the x and y positions and a scale factor to scale the system down to computer size
         for (Particle planet: planets) {
-            g.fillOval((int) (planet.getPosition()[0]/ a), (int) (planet.getPosition()[1]/a), 10, 10);
+            g.fillOval((int) (planet.getPosition()[0]/ d), (int) (planet.getPosition()[1]/d), 10, 10);
         }
 
         // moon
@@ -139,7 +139,7 @@ public class Drawing extends Canvas implements ActionListener {
     
     private void update() {
         // sets the time period to 10000 to use in calculating the force and velocity
-        time = 10000;
+        time = 100000;
         
 //        moon.resetForce();
 //        moon.calculateForce(earth);
