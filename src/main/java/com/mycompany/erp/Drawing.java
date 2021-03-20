@@ -134,7 +134,7 @@ public class Drawing extends Canvas implements ActionListener {
         System.out.println("x " + (int) (earth.getPosition()[0]/ a) + " y " + (int) (earth.getPosition()[1]/a));
         
         // draws the sun in the centre of the screen
-        g.fillOval(-25, -25, 50, 50);
+//        g.fillOval(-25, -25, 50, 50);
     }
     
     private void update() {
