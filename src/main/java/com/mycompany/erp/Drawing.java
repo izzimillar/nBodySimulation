@@ -32,7 +32,7 @@ public class Drawing extends Canvas implements ActionListener {
     private double a = 8e8;
     private double b = 7e8;
     private double c = 2e9;
-    private double d = 1.3e10;
+    private double d = 1.3e9;
     
     // radius of the solar system (ive taken the value of neptunes orbit atm)
     
@@ -121,7 +121,7 @@ public class Drawing extends Canvas implements ActionListener {
     
     public void paint(Graphics g) {
         // moves the origin to the centre of the frame
-        g.translate(400,400);
+//        g.translate(400,400);
         
         // draws an circle to represent each planet using the x and y positions and a scale factor to scale the system down to computer size
         for (Particle planet: planets) {
@@ -139,7 +139,7 @@ public class Drawing extends Canvas implements ActionListener {
     
     private void update() {
         // sets the time period to 10000 to use in calculating the force and velocity
-        time = 100000;
+        time = 10000;
         
 //        moon.resetForce();
 //        moon.calculateForce(earth);
