@@ -20,20 +20,15 @@ public class Drawing extends Canvas implements ActionListener {
     //  ALL NUMBERS NEED TO BE IN KG AND M!!!!!!!!
     // av distance from sun & mean orbital velocity used
     
-//    private double size = 10;
-//    private double[] v = {0,30000};
-//    //private double[] v = {0,0};
-//    private double[] p = {1.496e11,0};
-//    //private double[] p = {1e6,0};
-//    private double[] v2 = {0,0};
-//    private double[] p2 = {0,0};
     private int time;
     
+    // constants
     private double a = 8e8;
     private double b = 7e8;
     private double c = 2e9;
-    private double d = 1.3e9;
+    private double d = 1.3e10;
     
+        
     // radius of the solar system (ive taken the value of neptunes orbit atm)
     
     // constants to x the size of the screen and masses of bodies by to make it as sort of accurate as possible
@@ -121,30 +116,28 @@ public class Drawing extends Canvas implements ActionListener {
     
     public void paint(Graphics g) {
         // moves the origin to the centre of the frame
-//        g.translate(400,400);
+        g.translate(400,400);
         
         // draws an circle to represent each planet using the x and y positions and a scale factor to scale the system down to computer size
         for (Particle planet: planets) {
-            g.fillOval((int) (planet.getPosition()[0]/ d), (int) (planet.getPosition()[1]/d), 10, 10);
+            int x = (int) (planet.getPosition()[0]/a);
+            int y = (int) (planet.getPosition()[1]/a);
+            g.fillOval(x, y, 5, 5);
         }
-
+        
         // moon
 //        g.fillOval((int) ((moon.getPosition()[0]) / b), (int) ((moon.getPosition()[1]) /b), 5, 5);
         
         System.out.println("x " + (int) (earth.getPosition()[0]/ a) + " y " + (int) (earth.getPosition()[1]/a));
         
         // draws the sun in the centre of the screen
-//        g.fillOval(-25, -25, 50, 50);
+        g.fillOval(-250, -250, 500, 500);
     }
     
     private void update() {
         // sets the time period to 10000 to use in calculating the force and velocity
         time = 10000;
         
-//        moon.resetForce();
-//        moon.calculateForce(earth);
-//        moon.calculateForce(sun);
-//        moon.updateParticle(time);
         // loop through the list of planets to calculate the force exerted on them
         for (Particle planet: planets) {
             // sets the force to zero at the beginning of each time it is updated
@@ -159,7 +152,7 @@ public class Drawing extends Canvas implements ActionListener {
                     planet.calculateForce(planet2);
                 }
             }
-            // after the total force has been calculated updates the velocity and position of eah particle
+            // after the total force has been calculated updates the velocity and position of each particle
             planet.updateParticle(time);
         }
 
