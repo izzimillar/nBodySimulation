@@ -135,7 +135,8 @@ public class Drawing extends Canvas implements ActionListener {
                 g.fillOval(x-radius, y-radius, diameter, diameter);
             }
             
-//            g.fillOval(0, 0, 500, 500);
+            int sunSize = (int) (sun.getSize()/1000);
+            g.fillOval(-sunSize/2, -sunSize/2, sunSize, sunSize);
         } else {
             g.translate(0,370);
 
