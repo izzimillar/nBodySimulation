@@ -35,63 +35,72 @@ public class Drawing extends Canvas implements ActionListener {
     private double solarMass = 1.9891e30;
     private double[] sunVel = {0,0};
     private double[] sunPos = {0,0};
-    private Particle sun = new Particle(solarMass, sunVel, sunPos);
+    private double sunRadius = 695508;
+    private Particle sun = new Particle(solarMass, sunVel, sunPos, sunRadius);
 
     
     // instansiating the earth
     private double earthMass = 5.97219e24;
     private double[] earthVel = {0,29782.78};
     private double[] earthPos = {1.49598262e11, 0};
-    private Particle earth = new Particle(earthMass, earthVel, earthPos);
+    private double earthRadius = 6371;
+    private Particle earth = new Particle(earthMass, earthVel, earthPos, earthRadius);
     
     
     // instansiating mercury
     private double mercuryMass = 3.30104e23;
     private double[] mercuryVel = {0,47361.94};
     private double[] mercuryPos = {5.7909227e10, 0};
-    private Particle mercury = new Particle(mercuryMass, mercuryVel, mercuryPos);
+    private double mercuryRadius = 2439.7;
+    private Particle mercury = new Particle(mercuryMass, mercuryVel, mercuryPos, mercuryRadius);
     
     
     // instansiating venus
     private double venusMass = 4.86732e24;
     private double[] venusVel = {0, 35020.56};
     private double[] venusPos = {1.08209475e11, 0};
-    private Particle venus = new Particle(venusMass, venusVel, venusPos);
+    private double venusRadius = 6051.8;
+    private Particle venus = new Particle(venusMass, venusVel, venusPos, venusRadius);
     
     
     // instansiating mars
     private double marsMass = 6.41693e23;
     private double[] marsVel = {0, 24076.94};
     private double[] marsPos = {2.27943824e11, 0};
-    private Particle mars = new Particle(marsMass, marsVel, marsPos);
+    private double marsRadius = 3389.5;
+    private Particle mars = new Particle(marsMass, marsVel, marsPos, marsRadius);
     
     
     // instansiating jupiter
     private double jupiterMass = 1.89813e27;
     private double[] jupiterVel = {0, 13056.11};
     private double[] jupiterPos = {7.78340821e11, 0};
-    private Particle jupiter = new Particle(jupiterMass, jupiterVel, jupiterPos);
+    private double jupiterRadius = 69911;
+    private Particle jupiter = new Particle(jupiterMass, jupiterVel, jupiterPos, jupiterRadius);
     
     
     // instansiating saturn
     private double saturnMass = 5.68319e26;
     private double[] saturnVel = {0, 9639.17};
     private double[] saturnPos = {1.426666422e12, 0};
-    private Particle saturn = new Particle(saturnMass, saturnVel, saturnPos);
+    private double saturnRadius = 58232;
+    private Particle saturn = new Particle(saturnMass, saturnVel, saturnPos, saturnRadius);
     
     
     // instansiating uranus
     private double uranusMass = 8.68103e25;
     private double[] uranusVel = {0, 6799.17};
     private double[] uranusPos = {2.870658186e12, 0};
-    private Particle uranus = new Particle(uranusMass, uranusVel, uranusPos);
+    private double uranusRadius = 25362;
+    private Particle uranus = new Particle(uranusMass, uranusVel, uranusPos, uranusRadius);
 
     
     // instansiating neptune
     private double neptuneMass = 1.0241e26;
     private double[] neptuneVel = {0, 5435};
     private double[] neptunePos = {4.498396441e12, 0};
-    private Particle neptune = new Particle(neptuneMass, neptuneVel, neptunePos);
+    private double neptuneRadius = 24622;
+    private Particle neptune = new Particle(neptuneMass, neptuneVel, neptunePos, neptuneRadius);
     
     
     // creates a list of all the planets to perform the calculations on
@@ -101,10 +110,10 @@ public class Drawing extends Canvas implements ActionListener {
     private Particle[] smallPlanets = {mercury, venus, earth, mars};
     
     // earth's moon huh
-    private double moonMass = 7.34767309245735e22;
-    private double[] moonVel = {0,(29782.78+1022.36)};
-    private double[] moonPos = {(1.49598262e11-3.844e8),0};
-    private Particle moon = new Particle(moonMass, moonVel, moonPos);
+//    private double moonMass = 7.34767309245735e22;
+//    private double[] moonVel = {0,(29782.78+1022.36)};
+//    private double[] moonPos = {(1.49598262e11-3.844e8),0};
+//    private Particle moon = new Particle(moonMass, moonVel, moonPos);
 
     public Drawing() {
         // starts a timer that is used updates every at some point in time
@@ -115,23 +124,30 @@ public class Drawing extends Canvas implements ActionListener {
     public void paint(Graphics g) {
         
         if (showDistance) {
-            g.fillOval(0, 0, 500, 500);
+            g.translate(0, 370);
+            
+            for (int i = 0; i < planets.length; i++) {
+                int diameter = (int) (planets[i].getSize()*2/1000);
+                int radius = (int) (planets[i].getSize()/1000);
+                                
+                int x = (int) (planets[i].getPosition()[0]/relativeDistanceSF);
+                int y = (int) (planets[i].getPosition()[1]/relativeDistanceSF);
+                g.fillOval(x-radius, y-radius, diameter, diameter);
+            }
+            
+//            g.fillOval(0, 0, 500, 500);
         } else {
             g.translate(0,370);
 
-            // draws an circle to represent each planet using the x and y positions and a scale factor to scale the system down to computer size
+            // draws an circle to represent each planet using the x and y positions and a scale factor to scale the system down
+            // to a size that can be seen on the screen
             for (Particle planet: planets) {
                 int x = (int) (planet.getPosition()[0]/relativeDistanceSF);
                 int y = (int) (planet.getPosition()[1]/relativeDistanceSF);
                 g.fillOval(x, y, 5, 5);
             }
-
-            // moon
-    //        g.fillOval((int) ((moon.getPosition()[0]) / b), (int) ((moon.getPosition()[1]) /b), 5, 5);
-
-    //        System.out.println("x " + (int) (earth.getPosition()[0]/ a) + " y " + (int) (earth.getPosition()[1]/a));
-
-            // draws the sun in the centre of the screen
+            
+            // draws the sun in the centre of the screen with a size double that of the planets
             g.fillOval(-5, -5, 10, 10);
         }
     }
@@ -182,7 +198,7 @@ public class Drawing extends Canvas implements ActionListener {
         
         button.setActionCommand("action command 1");
         button.addActionListener(listener);
-        button.setBounds(100,700,95,30);
+        button.setBounds(50,700,80,30);
         frame.add(button);
         
         Canvas canvas = new Drawing();
