@@ -21,17 +21,14 @@ public class Drawing extends Canvas implements ActionListener {
     // av distance from sun & mean orbital velocity used
     
     private int time;
+    static boolean showDistance = true;
     
-    // constants
+    // constants to x the size of the screen and masses of bodies by to make it as sort of accurate as possible
     private double a = 8e8;
     private double b = 7e8;
     private double c = 2e9;
     private double d = 1.3e10;
     
-        
-    // radius of the solar system (ive taken the value of neptunes orbit atm)
-    
-    // constants to x the size of the screen and masses of bodies by to make it as sort of accurate as possible
     
     // instansiating the sun
     private double solarMass = 1.9891e30;
@@ -115,23 +112,28 @@ public class Drawing extends Canvas implements ActionListener {
     }
     
     public void paint(Graphics g) {
-        // moves the origin to the centre of the frame
-        g.translate(400,400);
         
-        // draws an circle to represent each planet using the x and y positions and a scale factor to scale the system down to computer size
-        for (Particle planet: planets) {
-            int x = (int) (planet.getPosition()[0]/a);
-            int y = (int) (planet.getPosition()[1]/a);
-            g.fillOval(x, y, 5, 5);
+        if (showDistance) {
+            g.fillOval(0, 0, 500, 500);
+        } else {
+            // moves the origin to the centre of the frame
+            g.translate(-100,400);
+
+            // draws an circle to represent each planet using the x and y positions and a scale factor to scale the system down to computer size
+            for (Particle planet: planets) {
+                int x = (int) (planet.getPosition()[0]/a);
+                int y = (int) (planet.getPosition()[1]/a);
+                g.fillOval(x, y, 5, 5);
+            }
+
+            // moon
+    //        g.fillOval((int) ((moon.getPosition()[0]) / b), (int) ((moon.getPosition()[1]) /b), 5, 5);
+
+    //        System.out.println("x " + (int) (earth.getPosition()[0]/ a) + " y " + (int) (earth.getPosition()[1]/a));
+
+            // draws the sun in the centre of the screen
+            g.fillOval(-250, -250, 500, 500);
         }
-        
-        // moon
-//        g.fillOval((int) ((moon.getPosition()[0]) / b), (int) ((moon.getPosition()[1]) /b), 5, 5);
-        
-        System.out.println("x " + (int) (earth.getPosition()[0]/ a) + " y " + (int) (earth.getPosition()[1]/a));
-        
-        // draws the sun in the centre of the screen
-        g.fillOval(-250, -250, 500, 500);
     }
     
     private void update() {
@@ -160,19 +162,36 @@ public class Drawing extends Canvas implements ActionListener {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        System.out.println("");
+//        System.out.println("");
         update();
         repaint();
     }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("n-body simulation");
+        
+        JButton button = new JButton("switch");
+        
+        ActionListener listener = new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                String str = event.getActionCommand();
+                System.out.println("clicked " + str);
+                showDistance = !showDistance;
+            }
+        };
+        
+        button.setActionCommand("action command 1");
+        button.addActionListener(listener);
+        button.setBounds(10,10,95,30);
+        frame.add(button);
+        
         Canvas canvas = new Drawing();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        canvas.setSize(800, 800);
+        canvas.setSize(1500, 800);
         frame.add(canvas);
         frame.pack();
         frame.setVisible(true);
+        
         
     }
 }
