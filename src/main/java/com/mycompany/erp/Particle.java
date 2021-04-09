@@ -49,7 +49,7 @@ public class Particle {
         // calculates the angle between the 2 bodies so the force can be resolved into its x and y components
         double anglex = Math.acos(distancex/distance);
         double angley = Math.asin(distancey/distance);
-        System.out.println("distance " + distance);
+//        System.out.println("distance " + distance);
         
         //double EPS = 3e4;
         
@@ -63,8 +63,8 @@ public class Particle {
         force[0] += (wholeForce * Math.cos(anglex));
         force[1] += (wholeForce * Math.sin(angley));
         
-        System.out.println("whole force " + wholeForce);
-        System.out.println("force x " + force[0] + " force y " + force[1]);
+//        System.out.println("whole force " + wholeForce);
+//        System.out.println("force x " + force[0] + " force y " + force[1]);
     }
     
     public void updateParticle(double timeStep) {
@@ -72,7 +72,7 @@ public class Particle {
         vel[0] += force[0] * timeStep / mass;
         vel[1] += force[1] * timeStep / mass;
         
-        System.out.println("vel x " + vel[0] + " vel y " + vel[1]);
+//        System.out.println("vel x " + vel[0] + " vel y " + vel[1]);
                 
         // calculates the position of the body, using d = vt
         pos[0] += timeStep * vel[0];
@@ -80,7 +80,7 @@ public class Particle {
         
         // NB: these numbers are averages, assuming the acceleration is constant between each time step
                 
-        System.out.println("pos x " + pos[0] + " pos y " + pos[1]);
+//        System.out.println("pos x " + pos[0] + " pos y " + pos[1]);
 
     }
     
