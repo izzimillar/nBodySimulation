@@ -35,6 +35,15 @@ public class Particle {
         return pos;
     }
     
+    public double getSF() {
+        double distancex = this.pos[0];
+        double distancey = this.pos[1];        
+        
+        double distance = Math.sqrt((distancex*distancex) + (distancey*distancey));
+        
+        return distance/180;
+    }
+    
     public double getSize() {
         return radius;
     }
