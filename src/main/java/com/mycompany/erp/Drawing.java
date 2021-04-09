@@ -29,6 +29,7 @@ public class Drawing extends Canvas implements ActionListener {
     private double c = 2e9;
     private double d = 1.3e10;
     
+    private double relativeDistanceSF = 3.2e9;
     
     // instansiating the sun
     private double solarMass = 1.9891e30;
@@ -116,13 +117,12 @@ public class Drawing extends Canvas implements ActionListener {
         if (showDistance) {
             g.fillOval(0, 0, 500, 500);
         } else {
-            // moves the origin to the centre of the frame
-            g.translate(-100,400);
+            g.translate(0,370);
 
             // draws an circle to represent each planet using the x and y positions and a scale factor to scale the system down to computer size
             for (Particle planet: planets) {
-                int x = (int) (planet.getPosition()[0]/a);
-                int y = (int) (planet.getPosition()[1]/a);
+                int x = (int) (planet.getPosition()[0]/relativeDistanceSF);
+                int y = (int) (planet.getPosition()[1]/relativeDistanceSF);
                 g.fillOval(x, y, 5, 5);
             }
 
@@ -132,7 +132,7 @@ public class Drawing extends Canvas implements ActionListener {
     //        System.out.println("x " + (int) (earth.getPosition()[0]/ a) + " y " + (int) (earth.getPosition()[1]/a));
 
             // draws the sun in the centre of the screen
-            g.fillOval(-250, -250, 500, 500);
+            g.fillOval(-5, -5, 10, 10);
         }
     }
     
@@ -182,7 +182,7 @@ public class Drawing extends Canvas implements ActionListener {
         
         button.setActionCommand("action command 1");
         button.addActionListener(listener);
-        button.setBounds(10,10,95,30);
+        button.setBounds(100,700,95,30);
         frame.add(button);
         
         Canvas canvas = new Drawing();
