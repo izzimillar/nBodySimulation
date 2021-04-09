@@ -30,6 +30,8 @@ public class Drawing extends Canvas implements ActionListener {
     private double d = 1.3e10;
     
     private double relativeDistanceSF = 3.2e9;
+    private double relativeSizeSF = 2200;
+    
     
     // instansiating the sun
     private double solarMass = 1.9891e30;
@@ -127,15 +129,16 @@ public class Drawing extends Canvas implements ActionListener {
             g.translate(0, 370);
             
             for (int i = 0; i < planets.length; i++) {
-                int diameter = (int) (planets[i].getSize()*2/1000);
-                int radius = (int) (planets[i].getSize()/1000);
-                                
-                int x = (int) (planets[i].getPosition()[0]/relativeDistanceSF);
-                int y = (int) (planets[i].getPosition()[1]/relativeDistanceSF);
+                int diameter = (int) (planets[i].getSize()*2/relativeSizeSF);
+                int radius = (int) (planets[i].getSize()/relativeSizeSF);
+                
+                int x = (int) ((planets[i].getPosition()[0]/planets[i].getSF())*(i+1));
+                int y = (int) ((planets[i].getPosition()[1]/planets[i].getSF())*(i+1));
+                
                 g.fillOval(x-radius, y-radius, diameter, diameter);
             }
             
-            int sunSize = (int) (sun.getSize()/1000);
+            int sunSize = (int) (sun.getSize()/relativeSizeSF);
             g.fillOval(-sunSize/2, -sunSize/2, sunSize, sunSize);
         } else {
             g.translate(0,370);
@@ -199,7 +202,7 @@ public class Drawing extends Canvas implements ActionListener {
         
         button.setActionCommand("action command 1");
         button.addActionListener(listener);
-        button.setBounds(50,700,80,30);
+        button.setBounds(1300,700,80,30);
         frame.add(button);
         
         Canvas canvas = new Drawing();
