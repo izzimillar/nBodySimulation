@@ -13,15 +13,17 @@ import java.lang.Math;
 public class Particle {
     private double G = 6.67408e-11;
     private double mass;
+    private double radius;
     private double[] vel;
     private double[] pos;
     private double[] force = {0,0};
     
     // constructor class
-    public Particle(double m, double[] v, double[] p) {
+    public Particle(double m, double[] v, double[] p, double r) {
         mass = m;
         vel = v;
         pos = p;
+        radius = r;
     }
     
     // returns the mass of the planet
@@ -31,6 +33,10 @@ public class Particle {
     
     public double[] getPosition() {
         return pos;
+    }
+    
+    public double getSize() {
+        return radius;
     }
     
     public void setPosition(double x, double y) {
