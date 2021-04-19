@@ -24,11 +24,6 @@ public class Drawing extends Canvas implements ActionListener {
     static boolean showDistance = true;
     
     // constants to x the size of the screen and masses of bodies by to make it as sort of accurate as possible
-    private double a = 8e8;
-    private double b = 7e8;
-    private double c = 2e9;
-    private double d = 1.3e10;
-    
     private double relativeDistanceSF = 3.2e9;
     private double relativeSizeSF = 2200;
     
