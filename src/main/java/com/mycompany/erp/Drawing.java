@@ -17,13 +17,16 @@ import java.lang.Math;
 
 
 public class Drawing extends Canvas implements ActionListener {
-    //  ALL NUMBERS NEED TO BE IN KG AND M!!!!!!!!
-    // av distance from sun & mean orbital velocity used
+    // all values are in kg and m
+    // average distance from sun & mean orbital velocity used for the initial conditions
+    
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     
     private int time;
     static boolean showDistance = true;
+    static Timer timer;
     
-    // constants to x the size of the screen and masses of bodies by to make it as sort of accurate as possible
+    // constants to multiply the size and distances of the planets by to make it both as accurate as possible and easy to see
     private double relativeDistanceSF = 3.2e9;
     private double relativeSizeSF = 2200;
     
@@ -103,39 +106,38 @@ public class Drawing extends Canvas implements ActionListener {
     // creates a list of all the planets to perform the calculations on
     private Particle[] planets = {mercury, venus, earth, mars, jupiter, saturn, uranus, neptune};
     
-    private Particle[] bigPlanets = {jupiter, saturn, uranus, neptune};
-    private Particle[] smallPlanets = {mercury, venus, earth, mars};
     
-    // earth's moon huh
-//    private double moonMass = 7.34767309245735e22;
-//    private double[] moonVel = {0,(29782.78+1022.36)};
-//    private double[] moonPos = {(1.49598262e11-3.844e8),0};
-//    private Particle moon = new Particle(moonMass, moonVel, moonPos);
-
     public Drawing() {
-        // starts a timer that is used updates every at some point in time
-        Timer timer = new Timer(500/60, this);
+        // starts a timer that is used updates every at point in time
+        timer = new Timer(500/60, this);
         timer.start();
     }
     
     public void paint(Graphics g) {
-        
         if (showDistance) {
-            g.translate(0, 370);
+            // if the relative sizes of the planets are being shown
+            g.translate(0, (int) screenSize.getHeight()/2);
             
+            // loops through all the planets
             for (int i = 0; i < planets.length; i++) {
+                // calculates the relative diameter and radius of each planet from the list
                 int diameter = (int) (planets[i].getSize()*2/relativeSizeSF);
                 int radius = (int) (planets[i].getSize()/relativeSizeSF);
                 
+                // calculates a constant distance for the distances between the planets depending on its order
                 int x = (int) ((planets[i].getPosition()[0]/planets[i].getSF())*(i+1));
                 int y = (int) ((planets[i].getPosition()[1]/planets[i].getSF())*(i+1));
                 
+                // draws a circle to represent the planet
                 g.fillOval(x-radius, y-radius, diameter, diameter);
             }
             
+            // draws the sun at half its relative size (to fit it on the screen)
             int sunSize = (int) (sun.getSize()/relativeSizeSF);
             g.fillOval(-sunSize/2, -sunSize/2, sunSize, sunSize);
         } else {
+            // if the relative distances are being shown
+            // translates the origin to the middle of the screen
             g.translate(0,370);
 
             // draws an circle to represent each planet using the x and y positions and a scale factor to scale the system down
@@ -143,6 +145,8 @@ public class Drawing extends Canvas implements ActionListener {
             for (Particle planet: planets) {
                 int x = (int) (planet.getPosition()[0]/relativeDistanceSF);
                 int y = (int) (planet.getPosition()[1]/relativeDistanceSF);
+                
+                // draws a circle to represnet the planet with a size of 5 pixels in a relative position
                 g.fillOval(x, y, 5, 5);
             }
             
@@ -151,6 +155,7 @@ public class Drawing extends Canvas implements ActionListener {
         }
     }
     
+    // function to update the forces on each of the planets at every time step
     private void update() {
         // sets the time period to 10000 to use in calculating the force and velocity
         time = 10000;
@@ -177,7 +182,6 @@ public class Drawing extends Canvas implements ActionListener {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-//        System.out.println("");
         update();
         repaint();
     }
@@ -189,16 +193,38 @@ public class Drawing extends Canvas implements ActionListener {
         
         ActionListener listener = new ActionListener() {
             public void actionPerformed(ActionEvent event) {
-                String str = event.getActionCommand();
-                System.out.println("clicked " + str);
                 showDistance = !showDistance;
             }
         };
         
-        button.setActionCommand("action command 1");
         button.addActionListener(listener);
-        button.setBounds(1300,700,80,30);
+        button.setBounds(1350,850,80,30);
+        
+        JButton button2 = new JButton("stop");
+        
+        ActionListener listener2 = new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                timer.stop();
+            }
+        };
+        
+        button2.addActionListener(listener2);
+        button2.setBounds(1250,850,80,30);
+        
+        JButton button3 = new JButton("start");
+        
+        ActionListener listener3 = new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                timer.start();
+            }
+        };
+        
+        button3.addActionListener(listener3);
+        button3.setBounds(1150,850,80,30);
+        
+        frame.add(button3);
         frame.add(button);
+        frame.add(button2);
         
         Canvas canvas = new Drawing();
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -208,5 +234,22 @@ public class Drawing extends Canvas implements ActionListener {
         frame.setVisible(true);
         
         
+    }
+    
+    
+    class ButtonPanel extends JFrame {
+        public ButtonPanel() {
+            JButton sizeOrDistance = new JButton("switch");
+            
+            ActionListener listener = new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    showDistance = !showDistance;
+                }
+            };
+            
+            sizeOrDistance.addActionListener(listener);
+            
+            this.add(sizeOrDistance);
+        }
     }
 }
