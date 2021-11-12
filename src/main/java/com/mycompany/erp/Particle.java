@@ -6,6 +6,7 @@
 package com.mycompany.erp;
 
 import java.lang.Math;
+import javax.swing.*;
 /**
  *
  * @author izzi
@@ -31,10 +32,12 @@ public class Particle {
         return mass;
     }
     
+    // returns the position of the planet (in the form [x pos, y pos]
     public double[] getPosition() {
         return pos;
     }
     
+    // calculates the scale factor that scales the distance down to a constant size
     public double getSF() {
         double distancex = this.pos[0];
         double distancey = this.pos[1];        
@@ -63,10 +66,7 @@ public class Particle {
         
         // calculates the angle between the 2 bodies so the force can be resolved into its x and y components
         double anglex = Math.acos(distancex/distance);
-        double angley = Math.asin(distancey/distance);
-//        System.out.println("distance " + distance);
-        
-        //double EPS = 3e4;
+        double angley = Math.asin(distancey/distance);        
         
         
         // calculates the force between the 2 bodies using the inverse square law
@@ -77,25 +77,19 @@ public class Particle {
         // calculates the x and y components of the force
         force[0] += (wholeForce * Math.cos(anglex));
         force[1] += (wholeForce * Math.sin(angley));
-        
-//        System.out.println("whole force " + wholeForce);
-//        System.out.println("force x " + force[0] + " force y " + force[1]);
     }
     
     public void updateParticle(double timeStep) {
         // calculates the velocity of the body using v = Ft/m
         vel[0] += force[0] * timeStep / mass;
         vel[1] += force[1] * timeStep / mass;
-        
-//        System.out.println("vel x " + vel[0] + " vel y " + vel[1]);
-                
+                        
         // calculates the position of the body, using d = vt
         pos[0] += timeStep * vel[0];
         pos[1] += timeStep * vel[1];
         
         // NB: these numbers are averages, assuming the acceleration is constant between each time step
                 
-//        System.out.println("pos x " + pos[0] + " pos y " + pos[1]);
 
     }
     
