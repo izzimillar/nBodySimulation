@@ -7,6 +7,7 @@ package com.mycompany.erp;
 
 import java.lang.Math;
 import javax.swing.*;
+import java.awt.*;
 /**
  *
  * @author izzi
@@ -18,13 +19,16 @@ public class Particle {
     private double[] vel;
     private double[] pos;
     private double[] force = {0,0};
+    private Color colour;
+    private Shape shape;
     
     // constructor class
-    public Particle(double m, double[] v, double[] p, double r) {
+    public Particle(double m, double[] v, double[] p, double r, Color c) {
         mass = m;
         vel = v;
         pos = p;
         radius = r;
+        colour = c;
     }
     
     // returns the mass of the planet
@@ -49,6 +53,18 @@ public class Particle {
     
     public double getSize() {
         return radius;
+    }
+    
+    public Color getColour() {
+        return colour;
+    }
+    
+    public Shape getShape() {
+        return shape;
+    }
+    
+    public void setShape(Shape shape) {
+        this.shape = shape;
     }
     
     public void setPosition(double x, double y) {
