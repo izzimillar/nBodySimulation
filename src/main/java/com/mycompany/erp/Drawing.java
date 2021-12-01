@@ -20,6 +20,16 @@ import java.util.ArrayList;
 
 public class Drawing extends JFrame implements ActionListener {
     
+    
+    
+    // close details thing programatically - click on planet when option pane is still there yk what i mean
+    // zoom
+    // move screen
+    // show timer
+    // speed up/slow down
+    
+    
+    
     // all values are in kg and m
     // average distance from sun & mean orbital velocity used for the initial conditions
     
@@ -30,7 +40,11 @@ public class Drawing extends JFrame implements ActionListener {
     static boolean relativeSizes = true;
     static Timer timer;
     
-    JLabel details;
+    DetailsPanel details;
+    boolean showDetails = false;
+    
+    JSlider slider = new JSlider(JSlider.HORIZONTAL, 1, 10, 5);
+    private int zoomFactor;
     
     // change these so they're relative to the screen and also can change them
     // scale factors to multiply the size and distances of the planets by to make it possible to see the distances and sizes relatively
@@ -62,7 +76,6 @@ public class Drawing extends JFrame implements ActionListener {
         this.setSize(screenSize);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
-        
         PaintSurface canvas = new PaintSurface();
         this.add(canvas);
         this.add(new ButtonPanel(), BorderLayout.SOUTH);
@@ -80,9 +93,11 @@ public class Drawing extends JFrame implements ActionListener {
                     for (Particle planet: planets) {
                         if (planet.getShape().contains(point)) {
                             // show details
-                            details = new JLabel("lol");
+                            details = new DetailsPanel(planet);
+                            showDetails = true;
                         }
                     }
+
                     
                 }
             });
@@ -91,6 +106,9 @@ public class Drawing extends JFrame implements ActionListener {
         public void paint(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            
+            g2.setColor(Color.BLACK);
+            g2.fillRect(0, 0, (int) screenSize.getWidth(), (int) screenSize.getHeight());
             
             // translates the origin to the middle of the left side
             g2.translate(0, screenSize.getHeight()/2);
@@ -103,9 +121,10 @@ public class Drawing extends JFrame implements ActionListener {
                     int radius = (int) (planets[i].getSize()/relativeSizeSF);
 
                     // calculates a constant distance for the distances between the planet and the sun depending on its order
-                    int x = (int) ((planets[i].getPosition()[0]/planets[i].getSF())*(i+1));
-                    int y = (int) ((planets[i].getPosition()[1]/planets[i].getSF())*(i+1));
-
+                    
+                    int x = (int) ((planets[i].getPosition()[0]/(planets[i].getSF() * zoomFactor/5))*(i+1));
+                    int y = (int) ((planets[i].getPosition()[1]/(planets[i].getSF() * zoomFactor/5))*(i+1));
+                    
                     // draws a circle to represent the planet
                     Shape planetShape = new Ellipse2D.Float(x-radius, y-radius, diameter, diameter);
                     g2.setColor(planets[i].getColour());
@@ -123,19 +142,24 @@ public class Drawing extends JFrame implements ActionListener {
             } else {
                 // draws an circle to represent each planet using the x and y positions and a scale factor to scale the system down
                 // to a size that can be seen on the screen
+                
+                // sizes of the planet displayed on the screen
+                int diameter = 5 * zoomFactor;
+                int radius = 5 * zoomFactor / 2;
+                
                 for (Particle planet: planets) {
                     int x = (int) (planet.getPosition()[0]/relativeDistanceSF);
                     int y = (int) (planet.getPosition()[1]/relativeDistanceSF);
 
                     // draws a circle to represnet the planet with a size of 5 pixels in a relative position
-                    Shape planetShape = new Ellipse2D.Float(x, y, 5, 5);
+                    Shape planetShape = new Ellipse2D.Float(x-radius, y-radius, diameter, diameter);
                     g2.setColor(planet.getColour());
                     g2.fill(planetShape);
                     planet.setShape(planetShape);
                 }
 
                 // draws the sun in the centre of the screen with a size of 10 pixels
-                Shape sunShape = new Ellipse2D.Float(-5, -5, 10, 10);
+                Shape sunShape = new Ellipse2D.Float(-diameter, -diameter, diameter * 2, diameter * 2);
                 g2.setColor(sun.getColour());
                 g2.fill(sunShape);
                 
@@ -206,28 +230,52 @@ public class Drawing extends JFrame implements ActionListener {
                 }
             };
             
+                        
+            slider.addChangeListener(e -> sliderChange());
             sizeOrDistance.addActionListener(listener);
             start.addActionListener(startFunc);
             stop.addActionListener(stopFunc);
             restart.addActionListener(restartFunc);
             
+            this.add(slider);
             this.add(sizeOrDistance);
             this.add(start);
             this.add(stop);
             this.add(restart);
+            this.setBackground(Color.BLACK);
+        }
+    }
+    
+    class DetailsPanel extends JDialog {
+        public DetailsPanel(Particle planet) {
+            JOptionPane pane = new JOptionPane("details");
+            pane.setBounds(0,0,100,100);
+            JDialog dialog = pane.createDialog((JFrame) null, planet.getName());
+            dialog.setLocation(screenSize.width, 0);
+            dialog.setVisible(true);
         }
     }
     
     public void switchRelative() {
+        // method to switch the relativeSizes variable from true to false to change how the planets are being displayed
         relativeSizes = !relativeSizes;
         repaint();
     }
     
     public void restartDraw() {
+        // method to set the planets back to their starting positions and repaint the screen
         planets = startingValues();
         repaint();
     }
     
+    public void sliderChange() {
+        int value = slider.getValue();
+        zoomFactor = value;
+        relativeSizeSF = 1000 * zoomFactor;
+        relativeDistanceSF = 3.2e9 / zoomFactor;
+        repaint();
+    }
+        
     public Particle[] startingValues() {
 
 
@@ -238,6 +286,7 @@ public class Drawing extends JFrame implements ActionListener {
          double earthRadius = 6371;
          Color earthColour = Color.green;
          Particle earth = new Particle(earthMass, earthVel, earthPos, earthRadius, earthColour);
+         earth.setName("Earth");
 
 
         // instansiating mercury
@@ -247,7 +296,8 @@ public class Drawing extends JFrame implements ActionListener {
          double mercuryRadius = 2439.7;
          Color mercuryColour = Color.magenta;
          Particle mercury = new Particle(mercuryMass, mercuryVel, mercuryPos, mercuryRadius, mercuryColour);
-
+         mercury.setName("Mercury");
+         
 
         // instansiating venus
          double venusMass = 4.86732e24;
@@ -256,6 +306,7 @@ public class Drawing extends JFrame implements ActionListener {
          double venusRadius = 6051.8;
          Color venusColour = Color.orange;
          Particle venus = new Particle(venusMass, venusVel, venusPos, venusRadius, venusColour);
+         venus.setName("Venus");
 
 
         // instansiating mars
@@ -265,6 +316,7 @@ public class Drawing extends JFrame implements ActionListener {
          double marsRadius = 3389.5;
          Color marsColour = Color.red;
          Particle mars = new Particle(marsMass, marsVel, marsPos, marsRadius, marsColour);
+         mars.setName("Mars");
 
 
         // instansiating jupiter
@@ -274,6 +326,7 @@ public class Drawing extends JFrame implements ActionListener {
          double jupiterRadius = 69911;
          Color jupiterColour = Color.orange;
          Particle jupiter = new Particle(jupiterMass, jupiterVel, jupiterPos, jupiterRadius, jupiterColour);
+         jupiter.setName("Jupiter");
 
 
         // instansiating saturn
@@ -283,6 +336,7 @@ public class Drawing extends JFrame implements ActionListener {
          double saturnRadius = 58232;
          Color saturnColour = Color.yellow;
          Particle saturn = new Particle(saturnMass, saturnVel, saturnPos, saturnRadius, saturnColour);
+         saturn.setName("Saturn");
 
 
         // instansiating uranus
@@ -292,6 +346,7 @@ public class Drawing extends JFrame implements ActionListener {
          double uranusRadius = 25362;
          Color uranusColour = Color.cyan;
          Particle uranus = new Particle(uranusMass, uranusVel, uranusPos, uranusRadius, uranusColour);
+         uranus.setName("Uranus");
 
 
         // instansiating neptune
@@ -301,9 +356,10 @@ public class Drawing extends JFrame implements ActionListener {
          double neptuneRadius = 24622;
          Color neptuneColour = Color.blue;
          Particle neptune = new Particle(neptuneMass, neptuneVel, neptunePos, neptuneRadius, neptuneColour);
+         neptune.setName("Neptune");
 
-         Particle[] lol = {mercury, venus, earth, mars, jupiter, saturn, uranus, neptune};
-        return lol;
+        Particle[] planets = {mercury, venus, earth, mars, jupiter, saturn, uranus, neptune};
+        return planets;
 
     }
 }
