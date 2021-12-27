@@ -6,7 +6,6 @@
 package com.mycompany.erp;
 
 import java.lang.Math;
-import javax.swing.*;
 import java.awt.*;
 /**
  *
@@ -21,6 +20,8 @@ public class Particle {
     private double[] force = {0,0};
     private Color colour;
     private Shape shape;
+    
+    private String name;
     
     // constructor class
     public Particle(double m, double[] v, double[] p, double r, Color c) {
@@ -42,13 +43,15 @@ public class Particle {
     }
     
     // calculates the scale factor that scales the distance down to a constant size
-    public double getSF() {
+    public double getSF(int idealDistance) {
         double distancex = this.pos[0];
-        double distancey = this.pos[1];        
+        double distancey = this.pos[1];
         
+        // pythagorus
         double distance = Math.sqrt((distancex*distancex) + (distancey*distancey));
         
-        return distance/180;
+        // returns a scalefactor that will be used to scale the actual distance to the ideal distance
+        return distance/idealDistance;
     }
     
     public double getSize() {
@@ -63,8 +66,16 @@ public class Particle {
         return shape;
     }
     
+    public String getName() {
+        return name;
+    }
+    
     public void setShape(Shape shape) {
         this.shape = shape;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
     }
     
     public void setPosition(double x, double y) {

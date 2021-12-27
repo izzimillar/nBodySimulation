@@ -14,12 +14,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
-import java.lang.Math.*;
-import java.util.ArrayList;
+import java.net.*;
+
 
 
 public class Drawing extends JFrame implements ActionListener {
-    
     
     
     // close details thing programatically - click on planet when option pane is still there yk what i mean
@@ -31,25 +30,30 @@ public class Drawing extends JFrame implements ActionListener {
     
     
     // all values are in kg and m
-    // average distance from sun & mean orbital velocity used for the initial conditions
+    // I have used the average distance from sun & mean orbital velocity from the NASA website for the initial conditions
     
     // gets the size of the screen
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     
     private int time;
+    // boolean to keep track of whether the relative sizes or relative distances are being shown
     static boolean relativeSizes = true;
     static Timer timer;
     
+    // the details panel that is displayed when a planet is clicked on
     DetailsPanel details;
+    // boolean to keep track of whether the details panel is currently being shown or not
     boolean showDetails = false;
     
+    // the slider that controls how zoomed in the simulation is
     JSlider slider = new JSlider(JSlider.HORIZONTAL, 1, 10, 5);
-    private int zoomFactor;
+    // the number that indicates the zoom factor of the simulation from the slider
+    private int zoomFactor = 5;
     
-    // change these so they're relative to the screen and also can change them
     // scale factors to multiply the size and distances of the planets by to make it possible to see the distances and sizes relatively
-    private double relativeDistanceSF = 3.2e9;
-    private double relativeSizeSF = 2200;
+    private double relativeDistanceSF = screenSize.getWidth()/4e9;
+    private double relativeSizeSF = 2000;
+    private int xPosition = 0;
     
     // instansiating the sun
     double solarMass = 1.9891e30;
@@ -73,12 +77,14 @@ public class Drawing extends JFrame implements ActionListener {
         // starts a timer that is used to update the position of the planets at every at point in time
         timer = new Timer(500/60, this);
         
+        // sets the size of the simulation to the screen size so it covers the whole screen
         this.setSize(screenSize);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         PaintSurface canvas = new PaintSurface();
         this.add(canvas);
         this.add(new ButtonPanel(), BorderLayout.SOUTH);
+        this.addKeyListener(new KeyListener());
                
         this.setVisible(true);
     }
@@ -88,17 +94,23 @@ public class Drawing extends JFrame implements ActionListener {
         public PaintSurface() {
             this.addMouseListener(new MouseAdapter() {
                 public void mousePressed(MouseEvent e) {
+                    showDetails = false;
+                    // gets the point that the mouse has been clicked
                     Point point = e.getPoint();
+                    // minuses half the screen height to the y value to account for the translation of the origin
                     point.y = point.y - (int) screenSize.getHeight()/2;
                     for (Particle planet: planets) {
+                        // if the point that was clicked is inside a planet
                         if (planet.getShape().contains(point)) {
                             // show details
                             details = new DetailsPanel(planet);
                             showDetails = true;
+                            repaint();
                         }
                     }
-
-                    
+                    if (!showDetails) {
+                        details = null;
+                    }
                 }
             });
         }
@@ -106,38 +118,44 @@ public class Drawing extends JFrame implements ActionListener {
         public void paint(Graphics g) {
             Graphics2D g2 = (Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            int temp;
             
             g2.setColor(Color.BLACK);
             g2.fillRect(0, 0, (int) screenSize.getWidth(), (int) screenSize.getHeight());
             
             // translates the origin to the middle of the left side
-            g2.translate(0, screenSize.getHeight()/2);
+            g2.translate(xPosition, screenSize.getHeight()/2);
             
             if (relativeSizes) {
+                // draws the sun at half its relative size (to fit it on the screen)
+
+                int sunSize = (int) ((sun.getSize() * 2)/relativeSizeSF);
+                Shape sunShape = new Ellipse2D.Float(-sunSize/2, -sunSize/2, sunSize, sunSize);
+                g2.setColor(sun.getColour());
+                g2.fill(sunShape);
+                
                 // loops through all the planets
+                temp = sunSize/2 + 36*zoomFactor;
                 for (int i = 0; i < planets.length; i++) {
                     // calculates the relative diameter and radius of each planet using the scale factors
                     int diameter = (int) (planets[i].getSize()*2/relativeSizeSF);
                     int radius = (int) (planets[i].getSize()/relativeSizeSF);
 
                     // calculates a constant distance for the distances between the planet and the sun depending on its order
-                    
-                    int x = (int) ((planets[i].getPosition()[0]/(planets[i].getSF() * zoomFactor/5))*(i+1));
-                    int y = (int) ((planets[i].getPosition()[1]/(planets[i].getSF() * zoomFactor/5))*(i+1));
+                    int x = (int) (planets[i].getPosition()[0]/(planets[i].getSF(temp)));
+                    int y = (int) (planets[i].getPosition()[1]/(planets[i].getSF(temp)));
                     
                     // draws a circle to represent the planet
                     Shape planetShape = new Ellipse2D.Float(x-radius, y-radius, diameter, diameter);
                     g2.setColor(planets[i].getColour());
                     g2.fill(planetShape);
                     planets[i].setShape(planetShape);
+
+                    temp += 50*zoomFactor;
+                    temp += diameter/relativeSizeSF;
                     
                 }
-                // draws the sun at half its relative size (to fit it on the screen)
-
-                int sunSize = (int) (sun.getSize()/relativeSizeSF);
-                Shape sunShape = new Ellipse2D.Float(-sunSize/2, -sunSize/2, sunSize, sunSize);
-                g2.setColor(sun.getColour());
-                g2.fill(sunShape);
                 
             } else {
                 // draws an circle to represent each planet using the x and y positions and a scale factor to scale the system down
@@ -164,6 +182,7 @@ public class Drawing extends JFrame implements ActionListener {
                 g2.fill(sunShape);
                 
             }
+
         }
     }
     
@@ -197,6 +216,24 @@ public class Drawing extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         update();
         repaint();
+    }
+    
+    // lol what
+    private class KeyListener extends KeyAdapter {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            switch(e.getKeyCode()) {
+                case KeyEvent.VK_0:
+                    xPosition += 100;
+                    repaint();
+                    break;
+                case KeyEvent.VK_1:
+                    xPosition -= 100;
+                    repaint();
+                    break;
+//                case 
+            }
+        }
     }
     
     class ButtonPanel extends JPanel {
@@ -246,13 +283,35 @@ public class Drawing extends JFrame implements ActionListener {
         }
     }
     
-    class DetailsPanel extends JDialog {
+    class DetailsPanel extends JPanel {
+
         public DetailsPanel(Particle planet) {
-            JOptionPane pane = new JOptionPane("details");
-            pane.setBounds(0,0,100,100);
+            String msg = "<html><u>more details</u></html>";
+            JLabel link = new JLabel(msg);
+            link.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            String url = "https://google.com";
+            URI uri = URI.create(url);
+            link.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    // the user has clicked on the link
+                    // Desktop.getDesktop().browse(uri);
+                    System.out.println("ur mhm");
+                }
+
+            });
+        //    url.addMouseListener();
+            JPanel message = new JPanel();
+            message.add(link);
+
+
+            JOptionPane pane = new JOptionPane(message);
+            
             JDialog dialog = pane.createDialog((JFrame) null, planet.getName());
             dialog.setLocation(screenSize.width, 0);
+            dialog.setSize(300, 150);
             dialog.setVisible(true);
+            
         }
     }
     
@@ -269,13 +328,14 @@ public class Drawing extends JFrame implements ActionListener {
     }
     
     public void sliderChange() {
+        // as slider gets bigger - sizes sf gets smaller
         int value = slider.getValue();
         zoomFactor = value;
-        relativeSizeSF = 1000 * zoomFactor;
+        relativeSizeSF = 5000 / zoomFactor;
         relativeDistanceSF = 3.2e9 / zoomFactor;
         repaint();
     }
-        
+    
     public Particle[] startingValues() {
 
 
