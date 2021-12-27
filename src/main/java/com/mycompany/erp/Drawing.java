@@ -284,36 +284,42 @@ public class Drawing extends JFrame implements ActionListener {
     }
     
     class DetailsPanel extends JPanel {
-
+        // updates the details panel with the relevant information when a planet is clicked on
         public DetailsPanel(Particle planet) {
+            // adds a link to the panel
             String msg = "<html><u>more details</u></html>";
             JLabel link = new JLabel(msg);
+            // sets the cursor to be a hand when moving over the link
             link.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            // gets the link to the relevant planets page on solarsytem.nasa.gov
             String url = planet.getLink();
+            // creates a uri from this link
             URI uri = URI.create(url);
             link.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    // the user has clicked on the link
+                    // if the user has clicked on the link
                     try {
-                        // open the link in the browser
+                        // try to open the link in the browser
                         Desktop.getDesktop().browse(uri);
                     } catch (Exception e1) {
+                        // prints if theres an error
                         e1.printStackTrace();
                     }
                 }
 
             });
-        //    url.addMouseListener();
+
+            // adds the link to the panel
             JPanel message = new JPanel();
             message.add(link);
 
-
+            // creates an option pane with the content on
             JOptionPane pane = new JOptionPane(message);
             
             JDialog dialog = pane.createDialog((JFrame) null, planet.getName());
             dialog.setLocation(screenSize.width, 0);
-            dialog.setSize(300, 150);
+            // dialog.setSize(300, 150);
             dialog.setVisible(true);
             
         }
@@ -332,9 +338,10 @@ public class Drawing extends JFrame implements ActionListener {
     }
     
     public void sliderChange() {
-        // as slider gets bigger - sizes sf gets smaller
         int value = slider.getValue();
+        // sets the zoom factor to the value currently on the slider
         zoomFactor = value;
+        // updates the two scale factors and repaints the 
         relativeSizeSF = 5000 / zoomFactor;
         relativeDistanceSF = 3.2e9 / zoomFactor;
         repaint();
