@@ -22,11 +22,9 @@ public class Drawing extends JFrame implements ActionListener {
     
     
     // close details thing programatically - click on planet when option pane is still there yk what i mean
-    // zoom
     // move screen
     // show timer
     // speed up/slow down
-    
     
     
     // all values are in kg and m
@@ -46,13 +44,13 @@ public class Drawing extends JFrame implements ActionListener {
     boolean showDetails = false;
     
     // the slider that controls how zoomed in the simulation is
-    JSlider slider = new JSlider(JSlider.HORIZONTAL, 1, 10, 5);
+    JSlider slider = new JSlider(JSlider.HORIZONTAL, 1, 10, 3);
     // the number that indicates the zoom factor of the simulation from the slider
-    private int zoomFactor = 5;
+    private int zoomFactor = 3;
     
     // scale factors to multiply the size and distances of the planets by to make it possible to see the distances and sizes relatively
-    private double relativeDistanceSF = screenSize.getWidth()/4e9;
-    private double relativeSizeSF = 2000;
+    private double relativeDistanceSF = 4e9/3;
+    private double relativeSizeSF = 5000/3;
     private int xPosition = 0;
     
     // instansiating the sun
@@ -62,11 +60,9 @@ public class Drawing extends JFrame implements ActionListener {
     double sunRadius = 695508;
     Color sunColour = Color.yellow;
     Particle sun = new Particle(solarMass, sunVel, sunPos, sunRadius, sunColour);
-
     
     // creates a list of all the planets to perform the calculations on
     private Particle[] planets = startingValues();
-
     
     public static void main(String[] args) {
         new Drawing();
@@ -84,9 +80,11 @@ public class Drawing extends JFrame implements ActionListener {
         PaintSurface canvas = new PaintSurface();
         this.add(canvas);
         this.add(new ButtonPanel(), BorderLayout.SOUTH);
-        this.addKeyListener(new KeyListener());
                
         this.setVisible(true);
+
+        this.addKeyListener(new KeyLis());
+
     }
         
     class PaintSurface extends JComponent {
@@ -103,14 +101,14 @@ public class Drawing extends JFrame implements ActionListener {
                         // if the point that was clicked is inside a planet
                         if (planet.getShape().contains(point)) {
                             // show details
-                            details = new DetailsPanel(planet);
                             showDetails = true;
+                            details = new DetailsPanel(planet);
                             repaint();
                         }
                     }
-                    if (!showDetails) {
-                        details = null;
-                    }
+                    // if (!showDetails) {
+                    //     // if you didnt click on a planet
+                    // }
                 }
             });
         }
@@ -218,24 +216,23 @@ public class Drawing extends JFrame implements ActionListener {
         repaint();
     }
     
-    // lol what
-    private class KeyListener extends KeyAdapter {
+    private class KeyLis extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
-            switch(e.getKeyCode()) {
-                case KeyEvent.VK_0:
-                    xPosition += 100;
-                    repaint();
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_LEFT:
+                    System.out.println("left");
+                    // xPosition += 100;
+                    // repaint();
                     break;
-                case KeyEvent.VK_1:
+                case KeyEvent.VK_RIGHT:
                     xPosition -= 100;
                     repaint();
                     break;
-//                case 
             }
         }
+
     }
-    
     class ButtonPanel extends JPanel {
         public ButtonPanel() {
             JButton sizeOrDistance = new JButton("switch");
@@ -320,8 +317,7 @@ public class Drawing extends JFrame implements ActionListener {
             JDialog dialog = pane.createDialog((JFrame) null, planet.getName());
             dialog.setLocation(screenSize.width, 0);
             // dialog.setSize(300, 150);
-            dialog.setVisible(true);
-            
+            dialog.setVisible(showDetails);            
         }
     }
     
@@ -343,7 +339,7 @@ public class Drawing extends JFrame implements ActionListener {
         zoomFactor = value;
         // updates the two scale factors and repaints the 
         relativeSizeSF = 5000 / zoomFactor;
-        relativeDistanceSF = 3.2e9 / zoomFactor;
+        relativeDistanceSF = 4e9 / zoomFactor;
         repaint();
     }
     
