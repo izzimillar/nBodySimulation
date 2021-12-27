@@ -22,6 +22,7 @@ public class Particle {
     private Shape shape;
     
     private String name;
+    private String link;
     
     // constructor class
     public Particle(double m, double[] v, double[] p, double r, Color c) {
@@ -70,12 +71,20 @@ public class Particle {
         return name;
     }
     
+    public String getLink() {
+        return link;
+    }
+
     public void setShape(Shape shape) {
         this.shape = shape;
     }
     
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
     }
     
     public void setPosition(double x, double y) {

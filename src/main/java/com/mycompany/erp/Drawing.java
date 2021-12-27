@@ -128,7 +128,7 @@ public class Drawing extends JFrame implements ActionListener {
             g2.translate(xPosition, screenSize.getHeight()/2);
             
             if (relativeSizes) {
-                // draws the sun at half its relative size (to fit it on the screen)
+                // draws the sun at its relative size
 
                 int sunSize = (int) ((sun.getSize() * 2)/relativeSizeSF);
                 Shape sunShape = new Ellipse2D.Float(-sunSize/2, -sunSize/2, sunSize, sunSize);
@@ -289,14 +289,18 @@ public class Drawing extends JFrame implements ActionListener {
             String msg = "<html><u>more details</u></html>";
             JLabel link = new JLabel(msg);
             link.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            String url = "https://google.com";
+            String url = planet.getLink();
             URI uri = URI.create(url);
             link.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     // the user has clicked on the link
-                    // Desktop.getDesktop().browse(uri);
-                    System.out.println("ur mhm");
+                    try {
+                        // open the link in the browser
+                        Desktop.getDesktop().browse(uri);
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
                 }
 
             });
@@ -340,83 +344,90 @@ public class Drawing extends JFrame implements ActionListener {
 
 
         // instansiating the earth
-         double earthMass = 5.97219e24;
-         double[] earthVel = {0,29782.78};
-         double[] earthPos = {1.49598262e11, 0};
-         double earthRadius = 6371;
-         Color earthColour = Color.green;
-         Particle earth = new Particle(earthMass, earthVel, earthPos, earthRadius, earthColour);
-         earth.setName("Earth");
+        double earthMass = 5.97219e24;
+        double[] earthVel = {0,29782.78};
+        double[] earthPos = {1.49598262e11, 0};
+        double earthRadius = 6371;
+        Color earthColour = Color.green;
+        Particle earth = new Particle(earthMass, earthVel, earthPos, earthRadius, earthColour);
+        earth.setName("Earth");
+        earth.setLink("https://solarsystem.nasa.gov/planets/earth/overview/");
 
 
-        // instansiating mercury
-         double mercuryMass = 3.30104e23;
-         double[] mercuryVel = {0,47361.94};
-         double[] mercuryPos = {5.7909227e10, 0};
-         double mercuryRadius = 2439.7;
-         Color mercuryColour = Color.magenta;
-         Particle mercury = new Particle(mercuryMass, mercuryVel, mercuryPos, mercuryRadius, mercuryColour);
-         mercury.setName("Mercury");
-         
+    // instansiating mercury
+        double mercuryMass = 3.30104e23;
+        double[] mercuryVel = {0,47361.94};
+        double[] mercuryPos = {5.7909227e10, 0};
+        double mercuryRadius = 2439.7;
+        Color mercuryColour = Color.magenta;
+        Particle mercury = new Particle(mercuryMass, mercuryVel, mercuryPos, mercuryRadius, mercuryColour);
+        mercury.setName("Mercury");
+        mercury.setLink("https://solarsystem.nasa.gov/planets/mercury/overview/");
+        
 
-        // instansiating venus
-         double venusMass = 4.86732e24;
-         double[] venusVel = {0, 35020.56};
-         double[] venusPos = {1.08209475e11, 0};
-         double venusRadius = 6051.8;
-         Color venusColour = Color.orange;
-         Particle venus = new Particle(venusMass, venusVel, venusPos, venusRadius, venusColour);
-         venus.setName("Venus");
+    // instansiating venus
+        double venusMass = 4.86732e24;
+        double[] venusVel = {0, 35020.56};
+        double[] venusPos = {1.08209475e11, 0};
+        double venusRadius = 6051.8;
+        Color venusColour = Color.orange;
+        Particle venus = new Particle(venusMass, venusVel, venusPos, venusRadius, venusColour);
+        venus.setName("Venus");
+        venus.setLink("https://solarsystem.nasa.gov/planets/venus/overview/");
 
-
-        // instansiating mars
-         double marsMass = 6.41693e23;
-         double[] marsVel = {0, 24076.94};
-         double[] marsPos = {2.27943824e11, 0};
-         double marsRadius = 3389.5;
-         Color marsColour = Color.red;
-         Particle mars = new Particle(marsMass, marsVel, marsPos, marsRadius, marsColour);
-         mars.setName("Mars");
-
-
-        // instansiating jupiter
-         double jupiterMass = 1.89813e27;
-         double[] jupiterVel = {0, 13056.11};
-         double[] jupiterPos = {7.78340821e11, 0};
-         double jupiterRadius = 69911;
-         Color jupiterColour = Color.orange;
-         Particle jupiter = new Particle(jupiterMass, jupiterVel, jupiterPos, jupiterRadius, jupiterColour);
-         jupiter.setName("Jupiter");
+    // instansiating mars
+        double marsMass = 6.41693e23;
+        double[] marsVel = {0, 24076.94};
+        double[] marsPos = {2.27943824e11, 0};
+        double marsRadius = 3389.5;
+        Color marsColour = Color.red;
+        Particle mars = new Particle(marsMass, marsVel, marsPos, marsRadius, marsColour);
+        mars.setName("Mars");
+        mars.setLink("https://solarsystem.nasa.gov/planets/mars/overview/");
 
 
-        // instansiating saturn
-         double saturnMass = 5.68319e26;
-         double[] saturnVel = {0, 9639.17};
-         double[] saturnPos = {1.426666422e12, 0};
-         double saturnRadius = 58232;
-         Color saturnColour = Color.yellow;
-         Particle saturn = new Particle(saturnMass, saturnVel, saturnPos, saturnRadius, saturnColour);
-         saturn.setName("Saturn");
+    // instansiating jupiter
+        double jupiterMass = 1.89813e27;
+        double[] jupiterVel = {0, 13056.11};
+        double[] jupiterPos = {7.78340821e11, 0};
+        double jupiterRadius = 69911;
+        Color jupiterColour = Color.orange;
+        Particle jupiter = new Particle(jupiterMass, jupiterVel, jupiterPos, jupiterRadius, jupiterColour);
+        jupiter.setName("Jupiter");
+        jupiter.setLink("https://solarsystem.nasa.gov/planets/jupiter/overview/");
 
 
-        // instansiating uranus
-         double uranusMass = 8.68103e25;
-         double[] uranusVel = {0, 6799.17};
-         double[] uranusPos = {2.870658186e12, 0};
-         double uranusRadius = 25362;
-         Color uranusColour = Color.cyan;
-         Particle uranus = new Particle(uranusMass, uranusVel, uranusPos, uranusRadius, uranusColour);
-         uranus.setName("Uranus");
+    // instansiating saturn
+        double saturnMass = 5.68319e26;
+        double[] saturnVel = {0, 9639.17};
+        double[] saturnPos = {1.426666422e12, 0};
+        double saturnRadius = 58232;
+        Color saturnColour = Color.yellow;
+        Particle saturn = new Particle(saturnMass, saturnVel, saturnPos, saturnRadius, saturnColour);
+        saturn.setName("Saturn");
+        saturn.setLink("https://solarsystem.nasa.gov/planets/saturn/overview/");
 
 
-        // instansiating neptune
-         double neptuneMass = 1.0241e26;
-         double[] neptuneVel = {0, 5435};
-         double[] neptunePos = {4.498396441e12, 0};
-         double neptuneRadius = 24622;
-         Color neptuneColour = Color.blue;
-         Particle neptune = new Particle(neptuneMass, neptuneVel, neptunePos, neptuneRadius, neptuneColour);
-         neptune.setName("Neptune");
+    // instansiating uranus
+        double uranusMass = 8.68103e25;
+        double[] uranusVel = {0, 6799.17};
+        double[] uranusPos = {2.870658186e12, 0};
+        double uranusRadius = 25362;
+        Color uranusColour = Color.cyan;
+        Particle uranus = new Particle(uranusMass, uranusVel, uranusPos, uranusRadius, uranusColour);
+        uranus.setName("Uranus");
+        uranus.setLink("https://solarsystem.nasa.gov/planets/uranus/overview/");
+
+
+    // instansiating neptune
+        double neptuneMass = 1.0241e26;
+        double[] neptuneVel = {0, 5435};
+        double[] neptunePos = {4.498396441e12, 0};
+        double neptuneRadius = 24622;
+        Color neptuneColour = Color.blue;
+        Particle neptune = new Particle(neptuneMass, neptuneVel, neptunePos, neptuneRadius, neptuneColour);
+        neptune.setName("Neptune");
+        neptune.setLink("https://solarsystem.nasa.gov/planets/neptune/overview/");
 
         Particle[] planets = {mercury, venus, earth, mars, jupiter, saturn, uranus, neptune};
         return planets;
