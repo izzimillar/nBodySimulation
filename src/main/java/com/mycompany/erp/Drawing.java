@@ -22,7 +22,7 @@ public class Drawing extends JFrame implements ActionListener {
     
     
     // close details thing programatically - click on planet when option pane is still there yk what i mean
-    // move screen
+    // move screen (ik exactly how to do it but my key listener isn't working right now which is jaring)
     // show timer
     // speed up/slow down
     
@@ -33,10 +33,15 @@ public class Drawing extends JFrame implements ActionListener {
     // gets the size of the screen
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     
-    private int time;
+    // relative time that the simulation is moving in
+    private int time = 0;
+    // int that controls how much the movement of the planets is increased by each time the timer goes off
+    private int timeStep = 10000;
     // boolean to keep track of whether the relative sizes or relative distances are being shown
     static boolean relativeSizes = true;
     static Timer timer;
+    // the label that shows how long the simulation has been running relatively
+    JLabel timeLabel;
     
     // the details panel that is displayed when a planet is clicked on
     DetailsPanel details;
@@ -71,6 +76,7 @@ public class Drawing extends JFrame implements ActionListener {
     
     public Drawing() {
         // starts a timer that is used to update the position of the planets at every at point in time
+        // the timer goes off approximately 100 times a second
         timer = new Timer(500/60, this);
         
         // sets the size of the simulation to the screen size so it covers the whole screen
@@ -186,8 +192,6 @@ public class Drawing extends JFrame implements ActionListener {
     
     // function to update the forces on each of the planets at every time step
     private void update() {
-        // sets the time period to 10000 seconds to use in calculating the force and velocity
-        time = 10000;
         
         // loops through the list of planets to calculate the force exerted on them
         for (Particle planet: planets) {
@@ -205,17 +209,24 @@ public class Drawing extends JFrame implements ActionListener {
             }
             
             // after the total force has been calculated updates the velocity and position of each particle
-            planet.updateParticle(time);
+            planet.updateParticle(timeStep);
         }
 
+        time += timeStep;
+
+        timeLabel.setText("days since start: " + time/(60*60*24));
     }
     
     @Override
+    // when the timer goes off
     public void actionPerformed(ActionEvent e) {
+        // updates the particles data
         update();
+        // repaints the screen
         repaint();
     }
     
+    // does not work i need to fix this but idk how because its not even saying its been pressed atm LOL
     private class KeyLis extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
@@ -233,12 +244,15 @@ public class Drawing extends JFrame implements ActionListener {
         }
 
     }
+
+
     class ButtonPanel extends JPanel {
         public ButtonPanel() {
             JButton sizeOrDistance = new JButton("switch");
             JButton start = new JButton("start");
             JButton stop = new JButton("stop");
             JButton restart = new JButton("restart");
+            timeLabel = new JLabel("days since start: " + time);
             
             ActionListener listener = new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
@@ -270,12 +284,15 @@ public class Drawing extends JFrame implements ActionListener {
             start.addActionListener(startFunc);
             stop.addActionListener(stopFunc);
             restart.addActionListener(restartFunc);
+
+            timeLabel.setForeground(Color.white);
             
             this.add(slider);
             this.add(sizeOrDistance);
             this.add(start);
             this.add(stop);
             this.add(restart);
+            this.add(timeLabel);
             this.setBackground(Color.BLACK);
         }
     }
@@ -330,6 +347,7 @@ public class Drawing extends JFrame implements ActionListener {
     public void restartDraw() {
         // method to set the planets back to their starting positions and repaint the screen
         planets = startingValues();
+        time = 0;
         repaint();
     }
     
