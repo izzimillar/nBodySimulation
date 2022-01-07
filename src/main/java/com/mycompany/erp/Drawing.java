@@ -210,7 +210,7 @@ public class Drawing extends JFrame implements ActionListener {
             // after the total force has been calculated updates the velocity and position of each particle
             planet.updateParticle(timeStep);
         }
-        
+
         daysSinceStart += timeStep/(60*60*24);
 
         timeLabel.setText("days since start: " + (int) daysSinceStart);
@@ -253,6 +253,7 @@ public class Drawing extends JFrame implements ActionListener {
             JButton restart = new JButton("restart");
             timeLabel = new JLabel("days since start: " + daysSinceStart);
             JButton speed = new JButton("faster");
+            JButton slow = new JButton("slower");
             
             ActionListener listener = new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
@@ -280,10 +281,15 @@ public class Drawing extends JFrame implements ActionListener {
 
             ActionListener speedUp = new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
-                    timeStep = timeStep * 2;
+                    timeStep = Math.min(timeStep * 2, 320000.0);
                 }
             };
             
+            ActionListener slowDown = new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    timeStep = Math.max(timeStep / 2, 2500);
+                }
+            };
                         
             slider.addChangeListener(e -> sliderChange());
             sizeOrDistance.addActionListener(listener);
@@ -291,6 +297,7 @@ public class Drawing extends JFrame implements ActionListener {
             stop.addActionListener(stopFunc);
             restart.addActionListener(restartFunc);
             speed.addActionListener(speedUp);
+            slow.addActionListener(slowDown);
 
             timeLabel.setForeground(Color.white);
             
@@ -301,6 +308,7 @@ public class Drawing extends JFrame implements ActionListener {
             this.add(restart);
             this.add(timeLabel);
             this.add(speed);
+            this.add(slow);
             this.setBackground(Color.BLACK);
         }
     }
