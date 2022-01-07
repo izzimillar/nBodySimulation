@@ -23,8 +23,7 @@ public class Drawing extends JFrame implements ActionListener {
     
     // close details thing programatically - click on planet when option pane is still there yk what i mean
     // move screen (ik exactly how to do it but my key listener isn't working right now which is jaring)
-    // show timer
-    // speed up/slow down
+    // speed up/slow down (add/minus to timestep)
     
     
     // all values are in kg and m
@@ -34,9 +33,9 @@ public class Drawing extends JFrame implements ActionListener {
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     
     // relative time that the simulation is moving in
-    private int time = 0;
+    private double daysSinceStart = 0;
     // int that controls how much the movement of the planets is increased by each time the timer goes off
-    private int timeStep = 10000;
+    private double timeStep = 10000;
     // boolean to keep track of whether the relative sizes or relative distances are being shown
     static boolean relativeSizes = true;
     static Timer timer;
@@ -211,10 +210,10 @@ public class Drawing extends JFrame implements ActionListener {
             // after the total force has been calculated updates the velocity and position of each particle
             planet.updateParticle(timeStep);
         }
+        
+        daysSinceStart += timeStep/(60*60*24);
 
-        time += timeStep;
-
-        timeLabel.setText("days since start: " + time/(60*60*24));
+        timeLabel.setText("days since start: " + (int) daysSinceStart);
     }
     
     @Override
@@ -252,7 +251,8 @@ public class Drawing extends JFrame implements ActionListener {
             JButton start = new JButton("start");
             JButton stop = new JButton("stop");
             JButton restart = new JButton("restart");
-            timeLabel = new JLabel("days since start: " + time);
+            timeLabel = new JLabel("days since start: " + daysSinceStart);
+            JButton speed = new JButton("faster");
             
             ActionListener listener = new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
@@ -277,6 +277,12 @@ public class Drawing extends JFrame implements ActionListener {
                     restartDraw();
                 }
             };
+
+            ActionListener speedUp = new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    timeStep = timeStep * 2;
+                }
+            };
             
                         
             slider.addChangeListener(e -> sliderChange());
@@ -284,6 +290,7 @@ public class Drawing extends JFrame implements ActionListener {
             start.addActionListener(startFunc);
             stop.addActionListener(stopFunc);
             restart.addActionListener(restartFunc);
+            speed.addActionListener(speedUp);
 
             timeLabel.setForeground(Color.white);
             
@@ -293,6 +300,7 @@ public class Drawing extends JFrame implements ActionListener {
             this.add(stop);
             this.add(restart);
             this.add(timeLabel);
+            this.add(speed);
             this.setBackground(Color.BLACK);
         }
     }
@@ -347,7 +355,7 @@ public class Drawing extends JFrame implements ActionListener {
     public void restartDraw() {
         // method to set the planets back to their starting positions and repaint the screen
         planets = startingValues();
-        time = 0;
+        daysSinceStart = 0;
         repaint();
     }
     
