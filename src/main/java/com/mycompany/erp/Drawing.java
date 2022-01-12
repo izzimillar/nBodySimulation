@@ -23,7 +23,6 @@ public class Drawing extends JFrame implements ActionListener {
     
     // close details thing programatically - click on planet when option pane is still there yk what i mean
     // move screen (ik exactly how to do it but my key listener isn't working right now which is jaring)
-    // speed up/slow down (add/minus to timestep)
     
     
     // all values are in kg and m
@@ -102,6 +101,8 @@ public class Drawing extends JFrame implements ActionListener {
                     Point point = e.getPoint();
                     // minuses half the screen height to the y value to account for the translation of the origin
                     point.y = point.y - (int) screenSize.getHeight()/2;
+                    // changes the x component of the point to account for any translation of the screen
+                    point.x = point.x - xPosition;
                     for (Particle planet: planets) {
                         // if the point that was clicked is inside a planet
                         if (planet.getShape().contains(point)) {
@@ -111,9 +112,6 @@ public class Drawing extends JFrame implements ActionListener {
                             repaint();
                         }
                     }
-                    // if (!showDetails) {
-                    //     // if you didnt click on a planet
-                    // }
                 }
             });
         }
@@ -244,17 +242,20 @@ public class Drawing extends JFrame implements ActionListener {
 
     }
 
-
     class ButtonPanel extends JPanel {
         public ButtonPanel() {
             JButton sizeOrDistance = new JButton("switch");
             JButton start = new JButton("start");
             JButton stop = new JButton("stop");
             JButton restart = new JButton("restart");
-            timeLabel = new JLabel("days since start: " + daysSinceStart);
+            timeLabel = new JLabel("days since start: " + (int) daysSinceStart);
             JButton speed = new JButton("faster");
             JButton slow = new JButton("slower");
-            
+            JButton left = new JButton("left");
+            left.setActionCommand("left");
+            JButton right = new JButton("right");
+            right.setActionCommand("right");
+
             ActionListener listener = new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     switchRelative();
@@ -290,6 +291,12 @@ public class Drawing extends JFrame implements ActionListener {
                     timeStep = Math.max(timeStep / 2, 2500);
                 }
             };
+
+            ActionListener move = new ActionListener() {
+                public void actionPerformed(ActionEvent event) {
+                    moveCentre(event.getActionCommand());
+                }
+            };
                         
             slider.addChangeListener(e -> sliderChange());
             sizeOrDistance.addActionListener(listener);
@@ -298,6 +305,8 @@ public class Drawing extends JFrame implements ActionListener {
             restart.addActionListener(restartFunc);
             speed.addActionListener(speedUp);
             slow.addActionListener(slowDown);
+            left.addActionListener(move);
+            right.addActionListener(move);
 
             timeLabel.setForeground(Color.white);
             
@@ -309,6 +318,8 @@ public class Drawing extends JFrame implements ActionListener {
             this.add(timeLabel);
             this.add(speed);
             this.add(slow);
+            this.add(left);
+            this.add(right);
             this.setBackground(Color.BLACK);
         }
     }
@@ -364,6 +375,7 @@ public class Drawing extends JFrame implements ActionListener {
         // method to set the planets back to their starting positions and repaint the screen
         planets = startingValues();
         daysSinceStart = 0;
+        xPosition = 0;
         repaint();
     }
     
@@ -377,6 +389,18 @@ public class Drawing extends JFrame implements ActionListener {
         repaint();
     }
     
+    public void moveCentre(String direction) {
+        // moves the centre of the drawing 100 pixels a direction depending on which button was pressed
+        // xPosition -= 100;
+        if (direction == "left") {
+            xPosition -= 100;
+        } else if (direction == "right") {
+            xPosition += 100;
+        }
+
+        repaint();
+    }
+
     public Particle[] startingValues() {
 
 
