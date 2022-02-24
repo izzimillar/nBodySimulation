@@ -31,30 +31,42 @@ public class Drawing extends JFrame implements ActionListener {
     // gets the size of the screen
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     
-    // relative time that the simulation is moving in
+    // keeps track of the relative time in days that the simulation has been running
     private double daysSinceStart = 0;
-    // int that controls how much the movement of the planets is increased by each time the timer goes off
+
+    // integer for the time changed each time the screen updates
+    // this controls how much the planets move each time the timer goes off
     private double timeStep = 10000;
+
     // boolean to keep track of whether the relative sizes or relative distances are being shown
     static boolean relativeSizes = true;
+
+    // the timer that controls the simulation
     static Timer timer;
+
     // the label that shows how long the simulation has been running relatively
     JLabel timeLabel;
     
     // the details panel that is displayed when a planet is clicked on
     DetailsPanel details;
+
     // boolean to keep track of whether the details panel is currently being shown or not
     boolean showDetails = false;
     
     // the slider that controls how zoomed in the simulation is
+    // from 1-10, starting at 3
     JSlider slider = new JSlider(JSlider.HORIZONTAL, 1, 10, 3);
+
     // the number that indicates the zoom factor of the simulation from the slider
     private int zoomFactor = 3;
     
     // scale factors to multiply the size and distances of the planets by to make it possible to see the distances and sizes relatively
     private double relativeDistanceSF = 4e9/3;
     private double relativeSizeSF = 5000/3;
+
+    // the inital x and y positions of the origin ie where the centre of the sun will be drawn
     private int xPosition = 0;
+    private int yPosition = screenSize.height/2;
     
     // instansiating the sun
     double solarMass = 1.9891e30;
@@ -97,11 +109,13 @@ public class Drawing extends JFrame implements ActionListener {
             this.addMouseListener(new MouseAdapter() {
                 public void mousePressed(MouseEvent e) {
                     showDetails = false;
+
                     // gets the point that the mouse has been clicked
                     Point point = e.getPoint();
-                    // minuses half the screen height to the y value to account for the translation of the origin
-                    point.y = point.y - (int) screenSize.getHeight()/2;
-                    // changes the x component of the point to account for any translation of the screen
+
+                    // minuses the current y position from the y value to account for the translation of the origin
+                    point.y = point.y - yPosition;
+                    // changes the x component of the point to account for any translation of the origin
                     point.x = point.x - xPosition;
                     for (Particle planet: planets) {
                         // if the point that was clicked is inside a planet
@@ -122,11 +136,12 @@ public class Drawing extends JFrame implements ActionListener {
 
             int temp;
             
+            // draws a black rectangle the size of the screen so the background is black
             g2.setColor(Color.BLACK);
             g2.fillRect(0, 0, (int) screenSize.getWidth(), (int) screenSize.getHeight());
             
             // translates the origin to the middle of the left side
-            g2.translate(xPosition, screenSize.getHeight()/2);
+            g2.translate(xPosition, yPosition);
             
             if (relativeSizes) {
                 // draws the sun at its relative size
@@ -402,7 +417,6 @@ public class Drawing extends JFrame implements ActionListener {
     }
 
     public Particle[] startingValues() {
-
 
         // instansiating the earth
         double earthMass = 5.97219e24;

@@ -119,7 +119,7 @@ public class Particle {
         // calculates the velocity of the body using v = Ft/m
         vel[0] += force[0] * timeStep / mass;
         vel[1] += force[1] * timeStep / mass;
-                        
+        
         // calculates the position of the body, using d = vt
         pos[0] += timeStep * vel[0];
         pos[1] += timeStep * vel[1];
